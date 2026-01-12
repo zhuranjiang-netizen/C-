@@ -1,0 +1,47 @@
+# **kth-largest-element-in-an-array/**
+**🔗 题目链接：**  
+**[kth-largest-element-in-an-array/](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/?envType=problem-list-v2&envId=heap-priority-queue/)**
+---
+
+## **解题代码（C++）**
+
+```cpp
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        int n = nums.size();
+
+        // 1. 建大根堆
+        for (int i = n/2 - 1; i >= 0; i--) {
+            heapify(nums, n, i);
+        }
+
+        // 2. 删除 k-1 次最大值
+        for (int i = 0; i < k-1; i++) {
+            swap(nums[0], nums[n-1-i]);
+            heapify(nums, n-1-i, 0);
+        }
+
+        return nums[0];
+    }
+
+    void heapify(vector<int>& nums, int heapSize, int i) {
+        while (true) {
+            int largest = i;
+            int left = 2*i + 1;
+            int right = 2*i + 2;
+
+            if (left < heapSize && nums[left] > nums[largest])
+                largest = left;
+            if (right < heapSize && nums[right] > nums[largest])
+                largest = right;
+
+            if (largest == i) break;
+
+            swap(nums[i], nums[largest]);
+            i = largest;
+        }
+    }
+};
+解题思路：
+采用大顶堆，建堆的时候是先操作最后一个不是叶子节点的元素，同时在找寻最后一个非叶子节点的时候是采用n/2-1，n相当于一个虚拟的元素的下标，在判断是否存在左孩子时，把 n 当作左孩子下标的上界哨兵（sentinel）
